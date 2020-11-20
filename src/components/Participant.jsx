@@ -60,6 +60,8 @@ const Participant = ({ participant }) => {
     <video ref={videoRef} autoPlay={true} />
     <audio ref={audioRef} autoPlay={true} muted={true} />
   </div>
-);
+  );
+
+}
 
 export default Participant;

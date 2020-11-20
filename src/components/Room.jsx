@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Video from 'twilio-video';
+import Participant from './Participant';
 
 // Connect to Twilio Video service using token and roomname
 const Room = ({ roomName, token, handleLogout }) => {
@@ -7,7 +8,7 @@ const Room = ({ roomName, token, handleLogout }) => {
   const [participants, setParticipants] = useState([]);
 
   const remoteParticipants = participants.map(participant => (
-    <p key={participant.sid}>{participant.identity}</p>
+    <Participant key={participant.sid} participant={participant} />
   ));
 
   // When our component loads we want to connect to video service, and we need functions to run whenever a participant joins or leaves the room to add/remove participants from the state
@@ -50,7 +51,10 @@ const Room = ({ roomName, token, handleLogout }) => {
       <button onClick={handleLogout}>Log out</button>
       <div className="local-participant">
         {room ? (
-          <p key={room.localParticipant.sid}>{room.localParticipant.identity}</p>
+          <Participant
+            key={room.localParticipant.sid}
+            participant={room.localParticipant}
+          />
         ) : (
           ''
         )}
