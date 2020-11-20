@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Lobby from './Lobby';
+import Room from './Room';
 
 const VideoChat = () => {
   const [username, setUsername] = useState('');
@@ -40,15 +41,11 @@ const VideoChat = () => {
     setToken(null);
   }, []);
 
-  // VideoChat renders the Lobby unless we have a token. Then we would render username, roomName, and token
+  // VideoChat renders the Lobby unless we have a token. Then we would render username, roomName, and
   let render;
   if (token) {
     render = (
-      <div>
-        <p>Username: {username}</p>
-        <p>Room name: {roomName}</p>
-        <p>Token: {token}</p>
-      </div>
+      <Room roomName={roomName} token={token} handleLogout={handleLogout} />
     );
   } else {
     render = (

@@ -10,6 +10,40 @@ const Room = ({ roomName, token, handleLogout }) => {
     <p key={participant.sid}>{participant.identity}</p>
   ));
 
+  // When our component loads we want to connect to video service, and we need functions to run whenever a participant joins or leaves the room to add/remove participants from the state
+  // If roomName or token changes, we expect to connect to a different room or as a different user
+  useEffect(() => {
+    const participantConnected = participant => {
+      setParticipants(prevParticipants => [...prevParticipants, participant]);
+    };
+    const participantDisconnected = participant => {
+      setParticipants(prevParticipants =>
+        prevParticipants.filter(p => p !== participant)
+      );
+    };
+    Video.connect(token, {
+      name: roomName
+    }).then(room => {
+      setRoom(room);
+      room.on('participantConnected', participantConnected);
+      room.on('participantDisconnected', participantDisconnected);
+      room.participants.forEach(participantConnected);
+    });
+    return () => {
+      setRoom(currentRoom => {
+        if (currentRoom && currentRoom.localParticipant.state === 'connected') {
+          currentRoom.localParticipant.tracks.forEach(function(trackPublication) {
+            trackPublication.track.stop();
+          });
+          currentRoom.disconnect();
+          return null;
+        } else {
+          return currentRoom;
+        }
+      });
+    };
+  }, [roomName, token]);
+
   return (
     <div className="room">
       <h2>Room: {roomName}</h2>
